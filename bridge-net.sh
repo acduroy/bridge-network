@@ -15,23 +15,36 @@ echo -n "Enter bridge name [ex. br0]: "; read BNAME
 # temporary name
 # brctl addbr $BNAME
 
+# Add the interfaces to be bridged #
+brctl addif $BNAME $PRI_INT $SEC_INT
+
 # Setup network config file #
 sudo cp /etc/network/interfaces /etc/network/interfaces.bak
 cat << BRIDGE | sudo tee /etc/network/interfaces
 
 source /etc/network/interfaces.d/*
 # The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto $PRI_INT
+iface $PRI_INT inet manual
+
+# The secondary network interface
+auto $SEC_INT
+iface $SEC_INT inet manual
+
+#The bride network interface
+iface $BNAME inet dhcp 
+bridge_ports $PRI_INT $SEC_INT
+
+BRIDGE
+
+# Reset network interface #
+sudo ip addr flush $PRI_INT
+sudo ip addr flush $SEC_INT
+sudo services networking restart
 
 
-
-# Add the interfaces to be bridged #
-ip addr show  
-# ex. eth0 and eth1 #
-brctl addif br0 eth0 eth1
-
-#  edit /etc/network/interfaces to look like below #
-# iface eth0 inet manual 
-# iface eth1 inet manual 
-# iface br0 inet dhcp 
-# bridge_ports eth0 eth1
 
