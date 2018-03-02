@@ -1,4 +1,6 @@
-nstall the software #
+#!/bin/bash
+
+#install the software #
 aptitude install bridge-utils
 
 # Create the bridge network #
