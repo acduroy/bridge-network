@@ -46,5 +46,8 @@ sudo ip addr flush $PRI_INT
 sudo ip addr flush $SEC_INT
 sudo services networking restart
 
+# to verify bride is working !!! #
+# brctl show
+
 
 
