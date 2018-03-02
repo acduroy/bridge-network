@@ -4,7 +4,10 @@
 aptitude install bridge-utils
 
 # Create the bridge network #
-brctl addbr br0
+echo -n "Enter the bridge name [ex. br0]: "; read BNAME
+
+# temporary name
+brctl addbr $BNAME
 
 # Add the interfaces to be bridged #
 ip addr show  
