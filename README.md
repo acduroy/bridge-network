@@ -15,3 +15,4 @@
 #   5.) Otherwise: Change the device's group to kvm/libvirtd instead: -> $ sudo chown root:libvirtd /dev/kvm
 # C. Installation of virtual manager (GUI) -> $ sudo apt-get install virt-manager
 
+#reference websiste -> https://help.ubuntu.com/community/KVM/Installation
