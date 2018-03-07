@@ -8,7 +8,7 @@ git config --global color.ui auto
 # create repositories #
 mkdir $1
 git init $1
-git clone https://github.com/acduroy/"$1".git
+git clone https://github.com/acduroy/$1.git
 
 exit 0
 
