@@ -13,7 +13,7 @@ usage(){
 
 # git configuration setup #
 git config --global user.name "acduroy"
-git config --global user.mail "acduroy@yahoo.com"
+git config --global user.email "acduroy@yahoo.com"
 git config --global color.ui auto
 
 # call usage() if directory name is not supplied #
