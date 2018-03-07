@@ -4,6 +4,7 @@ echo -e "\e[3J"	#disable scroll
 
 usage(){
 	clear
+	echo "repositoriy name was not supplied"
 	echo "Usage $0 github-setup"
 	echo "Ex: $ bridge-networking"
 	exit 1
