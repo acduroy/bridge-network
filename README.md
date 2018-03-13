@@ -1,5 +1,7 @@
 # bridge-network script creation 
-# Procedure in installing KVM on Ubuntu desktop 16.04.3
+# 
+# 
+# Procedure in installing KVM on Ubuntu desktop 16.04.3 
 # Note: First, make sure Network Manager is disabled at Ubuntu 16.04.3 Desktop rebuild
 #       To disable do the following -> $ sudo systemctl disable Network Manaager
 # A. Check if CPU supports hardware virtualization
@@ -15,4 +17,43 @@
 #   5.) Otherwise: Change the device's group to kvm/libvirtd instead: -> $ sudo chown root:libvirtd /dev/kvm
 # C. Installation of virtual manager (GUI) -> $ sudo apt-get install virt-manager
 
-#reference websiste -> https://help.ubuntu.com/community/KVM/Installation
+# reference websiste -> https://help.ubuntu.com/community/KVM/Installation
+#
+# Teamviewer - to install:
+# $sudo dpkg -i <path/to/deb.deb>
+# $sudo apt-get install -f
+# 
+# Teamviewer - to remove:
+# $sudo apt-get purge teamviewer
+#
+#
+# Virtual Manager - to delete virtual network:
+# $virsh net-list
+# $virsh net-destroy default
+# $virsh net-undefine default
+# $sudo service libvirtd restart
+# ifconfig
+#
+#
+# Bridge Networking:
+# 1) To delete dridge network 
+# $sudo ip link set <bridge_name> down
+# $sudo brctl delbr <bridge_name>
+#
+# 2) To create bridge network
+# $sudo brctl addbr <bridge_name>
+# $brctl show
+# $sudo ifup <bridge_name>
+#
+# 3) To create bridge interface permanently (edit /etc/network/interfaces)
+# * auto <bridge_name>
+# * iface <bridge_name> inet dhcp
+# * bridge_ports <interface_to_bridge; ex. enp1s0f2>
+# * bridge_stp off
+# * bridge_fd 0
+# * bridge_maxwait 0
+#
+#
+# Debugging network problem
+# Open a syslog event log by executing the ff: command
+# $ tail -f /var/log/syslog
