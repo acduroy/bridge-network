@@ -1,0 +1,77 @@
+# Prerequisite: Ubuntu Server OS installed on MAAS server in this case 16.04 LTS release
+# Below steps will install maas from packages
+# Ref: https://docs.maas.io/2.3/en/installconfig-package-install
+
+# At MAAS server do:
+# show full list of maas packages 
+apt-cache search maas
+
+# Add a stable package repositories
+sudo apt-add-repository -yu ppa:maas/stable
+
+# Initial setup of MAAS environment 
+sudo apt update 
+sudo apt install maas
+
+# Create admin user
+sudo maas createadmin  
+
+# Alternative way to create MAAS user with script
+sudo maas createadmin --username=$PROFILE --emaail=$EMAIL_ADDRESS
+
+# Now login to MAAS web UI to complete the user configuration
+# At any web browser do: 
+http://<your_maas_ip>:5240/MAAS
+
+# At MAAS web UI to do:
+# Fill in the details for the initial MAAS configuration   
+Region name = <MAAS name>   
+DNS forwarder = 8.8.8.8   
+Choosing source = mass.io and Ubuntu images = 16.04 LTS release
+SSH keys for admin = <add multiple keys from launchpad and Github or enter manually>
+
+# To setup public key authentication for SSH manually:
+# ref: https://www.ssh.com/ssh/keygen/
+# At MAAS server do:
+# execute the command at home directory
+ssh-keygen
+
+# copy the public key authentication  
+cat ~/.ssh/id_rsa.pub
+
+# At MAAS web ui do: 
+Paste the publick key generated from MAAS server to the SSH keys for admin entry 
+Go to the "Subnets" tab 
+Add Fabric to the MAAS in networks 
+Add subnet to the Fabric  
+
+# At "Add subnet" sub-page do: 
+# Fill in the details for the dynamic range
+Name = <name-of-subnet>
+CIDR = <ex. 192.168.101.0/24>
+Fabric & VLAN = <choose the fabric to be linked with the subnet>
+Reserve range = <enter the start IP address and the end IP address>
+
+# Turn on DHCP
+Select default VLAN assigned to the Fabric under column VLAN
+Set the Rack controller that will manage DHCP (in this case the "MAAS")
+From the "Take action" button, select "Provide DHCP"
+
+# Enlist and commission servers
+Set all servers to PXE boot (make sure the right NIC interface as the boot device)  
+Boot each machine. Machines will be automatically enlisted in the Nodes tab
+Select all machines and "Commission" them using the "Take action" button
+Once machines are in "Ready" status, you can start deploying
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+

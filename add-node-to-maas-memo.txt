@@ -1,0 +1,28 @@
+site: MAAS by now installation is completed
+
+# MAAS with KVM 
+# ref: https://docs.maas.io/2.3/en/nodes-add
+# The procedure below is to add nodes via a Pod 
+
+# At MAAS node do:
+sudo apt install libvirt-bin
+
+# Generating SSH private/pub key 'maas' user.. (in case no private/pub key generated)
+# Remember this is key pair for 'maas' user!!!!
+sudo chsh -s /bin/bash maas
+sudo su - maas
+ssh-keygen -f ~/.ssh/id_rsa -N ''
+
+# Copy public key to the target node (from MAAS to KVM host in this case)
+# Remember this is still under 'mass' user shell/console!!!
+ssh-copy-id -i ~/.ssh/id_rsa $USER@$KVM_HOST
+
+# Testing connection between MAAS and KVM-Host:
+virsh -c qemu+ssh://$USER@$KVM_HOST/system list --all
+
+# Exit from 'maas' user shell
+exit
+
+# Go and read - Add nodes via a Pod section (adding KVM VMs)...
+# https://docs.maas.io/2.3/en/nodes-comp-hw
+
