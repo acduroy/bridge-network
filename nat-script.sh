@@ -9,7 +9,7 @@ echo -n "Hostname (e.g. gw0): "; read HNAME
 echo -n "Internal network interface (e.g. enp0s3): "; read INT
 echo -n "Internal network interface address (e.g. 10.0.0.1): "; read INT_ADDR
 echo -n "External network interface (e.g. enp0s8): "; read EXT
-#echo -n "Host-only network interface (e.g. enp0s9): "; read HOSTONLY
+echo -n "Host-only network interface (e.g. enp0s9): "; read HOSTONLY
 
 # Change host name
 sudo hostnamectl set-hostname $HNAME
