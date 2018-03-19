@@ -1,0 +1,10 @@
+Ref: https://www.ossramblings.com/bridged_networking_kvm_qemu_ubuntu
+
+for quick dynamic nic setting example:
+sudo ifconfig $EXTNIC down ($EXTNIC = br100 binding NIC)
+sudo ifconfig $EXTNIC promisc up
+sudo ifconfig $EXTNIC up
+
+sudo ifconfig $INTNIC down ($INTNIC = br201 binding NIC)
+sudo ifconfig $INTNIC promisc up
+sudo ifconfig $INTNIC up
