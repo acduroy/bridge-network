@@ -1,4 +1,6 @@
-# Prerequisite: Ubuntu Server OS installed on MAAS server in this case 16.04 LTS release
+# Prerequisite: 
+# 1) Ubuntu Server OS installed on MAAS server in this case 16.04 LTS release
+# 2) MAAS server should be NAT enabled before MAAS installation
 # Below steps will install maas from packages
 # Ref: https://docs.maas.io/2.3/en/installconfig-package-install
 
@@ -11,22 +13,27 @@ sudo apt-add-repository -yu ppa:maas/stable
 
 # Initial setup of MAAS environment 
 sudo apt update 
-sudo apt install maas
+sudo apt install maas -y
 
 # Create admin user
 sudo maas createadmin  
 
 # Alternative way to create MAAS user with script
 sudo maas createadmin --username=$PROFILE --emaail=$EMAIL_ADDRESS
+ex. username = "vmaas201", password = "Super123"
+
+#Import SSH keys - this can be done at web ui
 
 # Now login to MAAS web UI to complete the user configuration
 # At any web browser do: 
 http://<your_maas_ip>:5240/MAAS
 
 # At MAAS web UI to do:
-# Fill in the details for the initial MAAS configuration   
+# Fill in the details for the initial MAAS configuration  
+# For DNS forwarder value, use nslookup command to get the DNS ip 
+
 Region name = <MAAS name>   
-DNS forwarder = 8.8.8.8   
+DNS forwarder = <Upstream DNS ip address from nslookup yahoo.com>   
 Choosing source = mass.io and Ubuntu images = 16.04 LTS release
 SSH keys for admin = <add multiple keys from launchpad and Github or enter manually>
 
@@ -58,10 +65,25 @@ Set the Rack controller that will manage DHCP (in this case the "MAAS")
 From the "Take action" button, select "Provide DHCP"
 
 # Enlist and commission servers
-Set all servers to PXE boot (make sure the right NIC interface as the boot device)  
+# At target node BIOS:
+Set all servers to PXE boot (make sure the right NIC interface as the boot device)
+Set IPMI to DHCP mode  
 Boot each machine. Machines will be automatically enlisted in the Nodes tab
 Select all machines and "Commission" them using the "Take action" button
 Once machines are in "Ready" status, you can start deploying
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+
 
 
 
