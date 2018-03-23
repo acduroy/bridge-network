@@ -16,6 +16,12 @@ ssh-keygen -f ~/.ssh/id_rsa -N ''
 
 # Copy public key to the target node (from MAAS to KVM host in this case)
 # Remember this is still under 'mass' user shell/console!!!
+# Where $KVM_HOST represents the IP address of the KVM host 
+# $USER represents a user on the KVM host with the permission to communicate with the libvirt daemon
+# NOTE: user_name = User Name of KVM Host (ex. 'acd')
+# NOTE: ip_address = IP address of the host bridge (ex. br201 - 10.100.201.2)
+
+# Example "ssh-copy-id -i ~/.ssh/id_rsa acd@10.100.201.2
 ssh-copy-id -i ~/.ssh/id_rsa $USER@$KVM_HOST
 
 # Testing connection between MAAS and KVM-Host:
@@ -25,8 +31,14 @@ virsh -c qemu+ssh://$USER@$KVM_HOST/system list --all
 exit
 
 # Go and read - Add nodes via a Pod section (adding KVM VMs)...
-# ref: https://docs.maas.io/2.3/en/nodes-comp-hw
-# go to http://$MAAS_IPADDR:5240/MAAS/#/pods
-# virsh address format ex. qemu+ssh://$USER@$KVM_HOST/system 
+# https://docs.maas.io/2.3/en/nodes-comp-hw
+# NOTE: user_name = User Name of KVM Host (ex. 'acd')
+# NOTE: ip_address = IP address of the host bridge (ex. br201 - 10.100.201.2)  
+At MAAS web UI do:
+Go to Pods menu and add pod
+Select Pod type to "Virsh virtual system" 
+Enter the Virsh address = "qemu+ssh://<user_name>@<ip_address>/system" 
+Save pod
+ 
 
 
