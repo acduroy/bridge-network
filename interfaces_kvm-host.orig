@@ -1,0 +1,37 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+auto eno1
+iface eno1 inet manual
+  
+
+auto ens1f0
+iface ens1f0 inet manual
+
+auto br100
+iface br100 inet dhcp
+   bridge_ports eno1
+   bridge_stp off
+   bridge_fd 0
+   bridge_maxwait 0
+
+auto br200
+iface br200 inet static
+  address 10.100.200.2
+  netmask 255.255.255.0
+  broadcast 10.100.200.255
+  bridge_ports eno2
+  bridge_stp off
+  bridge_fd 0
+  bridge_maxwait 0
+
+auto br201
+iface br201 inet static
+  address 10.100.201.2
+  netmask 255.255.255.0
+  broadcast 10.100.201.0
+  bridge_ports ens1f0
+  bridge_stp off
+  bridge_fd 0
+  bridge_maxwait 0
