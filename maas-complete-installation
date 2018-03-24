@@ -24,6 +24,7 @@ ex. username = "vmaas201", password = "Super123"
 
 #Import SSH keys - this can be done at web ui
 
+
 # Now login to MAAS web UI to complete the user configuration
 # At any web browser do: 
 http://<your_maas_ip>:5240/MAAS
@@ -55,7 +56,9 @@ Add subnet to the Fabric
 # At "Add subnet" sub-page do: 
 # Fill in the details for the dynamic range
 Name = <name-of-subnet>
-CIDR = <ex. 192.168.101.0/24>
+CIDR = <10.100.203.0/24>
+Gateway IP = <10.100.201.1>
+DNS = 10.100.201.1
 Fabric & VLAN = <choose the fabric to be linked with the subnet>
 Reserve range = <enter the start IP address and the end IP address>
 
