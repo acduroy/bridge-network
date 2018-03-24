@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Display network configuration
+ip link
 
 # Wait for user input # 
 echo -n "Enter external network interface [ex. ens3]: "; read EXT
