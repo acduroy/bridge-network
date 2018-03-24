@@ -58,7 +58,7 @@ Add subnet to the Fabric
 Name = <name-of-subnet>
 CIDR = <10.100.203.0/24>
 Gateway IP = <10.100.201.1>
-DNS = 10.100.201.1
+DNS = <10.100.201.1>
 Fabric & VLAN = <choose the fabric to be linked with the subnet>
 Reserve range = <enter the start IP address and the end IP address>
 
@@ -97,10 +97,11 @@ ssh-keygen -f ~/.ssh/id_rsa -N ''
 # NOTE: ip_address = IP address of the host bridge (ex. br201 - 10.100.201.2)
 
 # Example "ssh-copy-id -i ~/.ssh/id_rsa acd@10.100.201.2
-ssh-copy-id -i ~/.ssh/id_rsa $USER@$KVM_HOST
+ssh-copy-id -i ~/.ssh/id_rsa $USER@$host_bridge_ipaddr
 
-# Testing connection between MAAS and KVM-Host:
-virsh -c qemu+ssh://$USER@$KVM_HOST/system list --all
+# Testing connection between MAAS and bridge-to-KVM:
+virsh -c qemu+ssh://$USER@$host_bridge_ipaddr/system list --all
+#ex. virsh -c qemu+ssh://acd@10.100.201.2/system list --all
 
 # Exit from 'maas' user shell
 exit
