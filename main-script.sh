@@ -46,11 +46,11 @@ function nat-enable {
 }
 
 function maas-install {
-   echo "maas is current installing"
+   echo "installing maas now, this may take time thanks ..."
 }
  
 function juju-install {
-   echo "maas is current installing"
+   echo "installing juju now, this may take time thanks ..."
 }
   
 function main {

@@ -1,0 +1,124 @@
+# Prerequisite: 
+# 1) Ubuntu Server OS installed on MAAS server in this case 16.04 LTS release
+# 2) MAAS server should be NAT enabled before MAAS installation
+# Below steps will install maas from packages
+# Ref: https://docs.maas.io/2.3/en/installconfig-package-install
+
+# At MAAS server do:
+# show full list of maas packages 
+apt-cache search maas
+
+# Add a stable package repositories
+sudo apt-add-repository -yu ppa:maas/stable
+
+# Initial setup of MAAS environment 
+sudo apt update 
+sudo apt install maas -y
+
+# Create admin user
+sudo maas createadmin  
+
+# Alternative way to create MAAS user with script
+sudo maas createadmin --username=$PROFILE --emaail=$EMAIL_ADDRESS
+ex. username = "vmaas201", password = "Super123"
+
+#Import SSH keys - this can be done at web ui
+
+# Now login to MAAS web UI to complete the user configuration
+# At any web browser do: 
+http://<your_maas_ip>:5240/MAAS
+
+# At MAAS web UI to do:
+# Fill in the details for the initial MAAS configuration  
+# For DNS forwarder value, use nslookup command to get the DNS ip 
+
+Region name = <MAAS name>   
+DNS forwarder = <Upstream DNS ip address from nslookup yahoo.com>   
+Choosing source = mass.io and Ubuntu images = 16.04 LTS release
+SSH keys for admin = <add multiple keys from launchpad and Github or enter manually>
+
+# To setup public key authentication for SSH manually:
+# ref: https://www.ssh.com/ssh/keygen/
+# At MAAS server do:
+# execute the command at home directory
+ssh-keygen
+
+# copy the public key authentication  
+cat ~/.ssh/id_rsa.pub
+
+# At MAAS web ui do: 
+Paste the publick key generated from MAAS server to the SSH keys for admin entry 
+Go to the "Subnets" tab 
+Add Fabric to the MAAS in networks 
+Add subnet to the Fabric  
+
+# At "Add subnet" sub-page do: 
+# Fill in the details for the dynamic range
+Name = <name-of-subnet>
+CIDR = <ex. 192.168.101.0/24>
+Fabric & VLAN = <choose the fabric to be linked with the subnet>
+Reserve range = <enter the start IP address and the end IP address>
+
+# Turn on DHCP
+Select default VLAN assigned to the Fabric under column VLAN
+Set the Rack controller that will manage DHCP (in this case the "MAAS")
+From the "Take action" button, select "Provide DHCP"
+
+# Enlist and commission servers
+# At target node BIOS:
+Set all servers to PXE boot (make sure the right NIC interface as the boot device)
+Set IPMI to DHCP mode  
+Boot each machine. Machines will be automatically enlisted in the Nodes tab
+Select all machines and "Commission" them using the "Take action" button
+Once machines are in "Ready" status, you can start deploying
+
+# To add virtual node to these steps below:
+# MAAS with KVM 
+# ref: https://docs.maas.io/2.3/en/nodes-add
+# The procedure below is to add nodes via a Pod 
+
+# At MAAS node do:
+sudo apt install libvirt-bin -y
+
+# Generating SSH private/pub key 'maas' user.. (in case no private/pub key generated)
+# Remember this is key pair for 'maas' user!!!!
+sudo chsh -s /bin/bash maas
+sudo su - maas
+ssh-keygen -f ~/.ssh/id_rsa -N ''
+
+# Copy public key to the target node (from MAAS to KVM host in this case)
+# Remember this is still under 'mass' user shell/console!!!
+# Where $KVM_HOST represents the IP address of the KVM host 
+# $USER represents a user on the KVM host with the permission to communicate with the libvirt daemon
+# NOTE: user_name = User Name of KVM Host (ex. 'acd')
+# NOTE: ip_address = IP address of the host bridge (ex. br201 - 10.100.201.2)
+
+# Example "ssh-copy-id -i ~/.ssh/id_rsa acd@10.100.201.2
+ssh-copy-id -i ~/.ssh/id_rsa $USER@$KVM_HOST
+
+# Testing connection between MAAS and KVM-Host:
+virsh -c qemu+ssh://$USER@$KVM_HOST/system list --all
+
+# Exit from 'maas' user shell
+exit
+
+# Go and read - Add nodes via a Pod section (adding KVM VMs)...
+# https://docs.maas.io/2.3/en/nodes-comp-hw
+# NOTE: user_name = User Name of KVM Host (ex. 'acd')
+# NOTE: ip_address = IP address of the host bridge (ex. br201 - 10.100.201.2)  
+At MAAS web UI do:
+Go to Pods menu and add pod
+Select Pod type to "Virsh virtual system" 
+Enter the Virsh address = "qemu+ssh://<user_name>@<ip_address>/system" 
+Save pod
+
+
+ 
+
+ 
+
+
+
+
+
+
