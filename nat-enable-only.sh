@@ -2,6 +2,8 @@
 
 # Display network interfaces status
 clear
+# Execute at home directory
+cd 
 ip link
 
 # Wait for user input # 
