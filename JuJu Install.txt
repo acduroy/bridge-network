@@ -1,0 +1,106 @@
+
+# JuJu installation
+# Ref: https://jujucharms.com/docs/stable/reference-install
+
+$ sudo apt install snapd
+
+#Note: A reboot will be needed after having installed snapd on Trusty since a new kernel (4.4.0 series) will be installed as a dependency.
+#Juju can be installed with the following command:
+
+$ sudo snap install juju --classic
+
+#In the above, the 'stable' snap channel is used by default.
+#The current version of an installed Juju snap is given by:
+
+$ snap list juju
+
+#And can be updated with:
+
+$ sudo snap refresh juju
+
+# Must Read:
+#https://jujucharms.com/docs/stable/juju-concepts
+# Adding MAAS Cloud
+# https://jujucharms.com/docs/stable/clouds-maas
+
+$ juju add-cloud
+
+# Example user seesion:
+# Cloud Types
+#  maas
+#  manual
+#  openstack
+#  oracle
+#  vsphere
+# Select cloud type: maas
+# Enter a name for your maas cloud: maas-cloud
+# Enter the API endpoint url: http://10.55.60.29:5240/MAAS
+# Cloud "maas-cloud" successfully added
+# You may bootstrap with 'juju bootstrap maas-cloud'
+
+# Confirm MAAS cloud addition
+
+$ juju clouds
+
+# First need to generate a MAAS Key for each Juju environment. 
+# To do that: go to maas web UI and select the maas user name tab located on the top left hand side of the gui.
+# In this example, "vmaas". At User preferences for "vmaas", Select Generate MAAS key. Copy the newly
+# generate key. Paste it when prompted for 'maas-oauth' during adding of credentials
+
+# Adding credentials to Juju MAAS cloud:
+# In this case maas-cloud = "maas_cloud201"
+
+$ juju add-credential <maas-cloud>
+
+# Example user session:
+# Enter credential name: maas-cloud-creds
+# Using auth-type "oauth1".
+# Enter maas-oauth: <--- Paste here the MAAS Key generated above by "RIGHT CLICK THE MOUSE ONCE" 
+# ELSE NEEDS TO REDO ADD CREDENTIAL AGAIN !!!
+# NOTE1: The API key will not be echoed back to the screen.
+# Credentials added for cloud maas-cloud.
+
+# Adding Controller to Juju MAAS cloud:
+# NOTE2: Make sure the target node is in "READY" status. Otherwise apply release command to the target node     
+# Creating Juju controller using default specifications with no constraints:
+# The "-- debug" option will provide verbose output to the screen
+
+$ juju bootstrap <cloud-name> <controller-name> --debug
+
+# With a constraints specifciation, use the command below
+# bootstrap using tags constraints  
+$ juju bootstrap --constraints tags=controller208 <maas-cloud> <maas-cloud-controller> --debug
+
+# bootstrap using memory constraints:
+$ juju boostrap --constraints="mem=4G" <maas-cloud> <maas-cloud-controller> --debug
+
+# Adding Model to Juju Controller:
+$ juju add-model <model name>
+$ juju models
+
+# For more detailed option, use the command
+# juju add-model [options] <model name> [key=[value] ...]
+
+# At Juju Charm Store:
+# To get app from charm store, do the ff commaand
+# Make sure the bundle is compatible with the Ubuntu OS (i.e. 'xenial')
+$ wget  https://api.jujucharms.com/charmstore/v5/mediawiki-single/archive
+$ unzip archive -d ~/mediawiki-single
+
+# Deploying Charms
+# In this example using "mediawiki" app
+$ juju deploy mediawiki-single
+$ juju status
+
+# Deploying openstack-base (#54) 
+# ref: https://jujucharms.com/openstack-base/
+# Create a model
+$ juju add-model openstack-base
+$ juju models
+
+# download the bundle
+$ wget https://api.jujucharms.com/charmstore/v5/openstack-base/archive
+$ unzip archive -d ~/openstack-base
+$ juju deploy ./bundle.yaml
+$ juju status
+  

@@ -1,0 +1,309 @@
+
+# Ref: file:///C:/Users/alecd/Desktop/OS%20Certification/MAAS_Advanced_NUC_Installation_And_Configuration.pdf
+# This guide assumes the use of Ubuntu 16.04 and MAAS 2.2. 
+# Creating a maas-cert-server 
+
+Install Ubuntu 16.04 (Xenial Xerus) to the portable system 
+
+Boot the portable computer and log in
+
+Configure your external network port (DHCP/IT)
+Configure your portable computer’s internal port (STATIC/ip=10.100.205.1/24)
+
+$ sudo apt-get update 
+$ sudo apt-get dist-upgrade -y
+
+Reboot the computer
+
+Installing MAAS for certification testing 
+
+# All files will be installed in subdirectories of /usr/share/maas-cert-server
+
+$ sudo apt-add-repository ppa:hardware-certification/public
+
+# Screen output below:
+# *****************************************************
+# You can then run Checkbox by running:
+# - checkbox-cli (textual user interface)
+#  More info: https://launchpad.net/~hardware-certification/+archive/ubuntu/public
+# Press [ENTER] to continue or ctrl-c to cancel adding it
+# gpg: keyring `/tmp/tmpvzej8vc9/secring.gpg' created
+# gpg: keyring `/tmp/tmpvzej8vc9/pubring.gpg' created
+# gpg: requesting key 1FEADE10 from hkp server keyserver.ubuntu.com
+# gpg: /tmp/tmpvzej8vc9/trustdb.gpg: trustdb created
+# gpg: key 1FEADE10: public key "Launchpad Private PPA for Hardware Certification" imported
+# gpg: Total number processed: 1
+# gpg:               imported: 1  (RSA: 1)
+# OK
+# *****************************************************
+ 
+$ sudo apt-get update 
+$ sudo apt-get install maas-cert-server # <-- this may consume 150MB of disk space (start=10:27 end=10:31)
+
+# Verify that you’ve installed MAAS 2.1.2 or later
+
+$ dpkg -s maas | grep Version
+Output: 
+Version: 2.3.0-6434-gd354690-0ubuntu1~16.04.1
+
+# Check or edit /etc/maas-cert-server/config file for correct parameters of INTERNAL_NET and EXTERNAL_NET
+# Note: NO spaces surrounding the equal signs (=) in the assignments! 
+Output:
+alecd@maas-cert:~$ cat /etc/maas-cert-server/config
+INTERNAL_NET=eth0
+EXTERNAL_NET=eth1
+FIXED_POINT_URL=http://certification-static.canonical.com/fixed-point-releases/
+
+# You might use this feature if your iperf server is not the SUTs’ network gateway 
+# or if you have multiple iperf servers.
+# This setting can be overridden on SUTs by editing the /etc/xdg/canonical-certification.conf file on the SUT
+
+Optionally create an /etc/maas-cert-server/iperf.conf file to identify your iperf server(s)
+
+Running the Setup Script:
+$ sudo maniacs-setup
+
+Output (from maniacs-setup script):
+############################################################################################################
+
+***************************************************************************
+* Identified networks:
+*   INTERNAL: 10.100.207.1 on eno2
+*   EXTERNAL: 172.31.40.40 on eno1
+*
+* Is this correct (Y/n)? Y
+
+***************************************************************************
+
+* Reconfiguring maas-region-controller
+apache2.service is not a native service, redirecting to systemd-sysv-install
+Executing /lib/systemd/systemd-sysv-install is-enabled apache2
+* Reconfiguring maas-rack-controller
+
+***************************************************************************
+* Verifying that MAAS is running....
+MAAS is running
+
+***************************************************************************
+* A MAAS administrative account with a name of alecd is being
+* created.
+*
+* Please enter a password for this account:
+* Please re-enter the password for verification:
+* Setting up the alecd MAAS account using the supplied password
+
+You are now logged in to the MAAS server at
+http://10.100.207.1/MAAS/api/2.0/ with the profile name 'admin'.
+
+For help with the available commands, try:
+
+  maas admin --help
+
+
+***************************************************************************
+* Setting up SSH keys for alecd
+
+***************************************************************************
+* NAT enables this computer to connect the nodes it controls to the Internet
+* for direct downloads of package updates and to submit certification results
+* to C3.
+*
+* You can configure this computer to automatically start NAT. If you do so, you
+* can disable it temporarily by using the 'flushnat.sh' script or permanently
+* by removing the reference to /usr/sbin/startnat.sh from /etc/rc.local.
+*
+* Do you want to set up this computer to automatically enable NAT (Y/n)? Y
+
+***************************************************************************
+* Mirroring an archive site is necessary if you'll be doing testing while
+* disconnected from the Internet, and is desirable if your test site has
+* poor Internet connectivity. Performing the mirroring operation takes
+* time and disk space, though -- about 150 GiB per release mirrored.
+* To defer this task, respond 'N' to the following question.
+*
+* Do you want to mirror an archive site for local use (y/N)? N
+*
+* You can set up a local mirror later by running this script with the
+* --mirror-archives (or -m) option.
+*
+
+***************************************************************************
+* An Ubuntu cloud image is required for virtualization tests. Having such
+* an image on your MAAS server can be convenient, but downloading it can
+* take a while (each image is about 250MiB). This process will import cloud
+* images for whatever releases and architectures you specify.
+*
+* To defer this task, respond 'N' to the following question.
+*
+* Do you want to set up a local cloud image mirror for the virtualization
+* tests (Y/n)? Y
+* Cloud Mirror does not exist.  Creating.
+* Do you want to get images for trusty release (y/N)? N
+* Do you want to get images for xenial release (Y/n)? Y
+* Do you want to get images for artful release (y/N)? N
+* Do you want to get images for bionic release (y/N)? N
+*
+* Do you want to get images for amd64 architecture (Y/n)? Y
+* Do you want to get images for i386 architecture (y/N)? N
+* Do you want to get images for arm64 architecture (y/N)? N
+* Do you want to get images for armhf architecture (y/N)? N
+* Do you want to get images for ppc64el architecture (y/N)? N
+* Do you want to get images for s390x architecture (y/N)? N
+* Downloading cloud images.  This may take some time.
+*
+* Downloading images for xenial on amd64....
+* Succeeded downloading xenial-server-cloudimg-amd64-disk1.img
+* Succeeded downloading xenial-server-cloudimg-amd64-lxd.tar.xz
+* Succeeded downloading xenial-server-cloudimg-amd64-root.tar.xz
+*
+* Virtualization image mirror is stored as /srv/cloud
+* and is available at http://10.100.207.1/cloud/
+
+***************************************************************************
+* Setting up MAAS IP address ranges:
+*    Low IP address = 10.100.207.10
+*    High IP address = 10.100.207.250
+* Initializing rack controller
+Success.
+Machine-readable output follows:
+{
+    "active_discovery": false,
+    "space": "undefined",
+    "rdns_mode": 2,
+    "vlan": {
+        "fabric": "fabric-1",
+        "secondary_rack": null,
+        "dhcp_on": true,
+        "id": 5002,
+        "name": "untagged",
+        "primary_rack": "we3qrb",
+        "vid": 0,
+        "space": "undefined",
+        "mtu": 1500,
+        "external_dhcp": null,
+        "relay_vlan": null,
+        "fabric_id": 1,
+        "resource_uri": "/MAAS/api/2.0/vlans/5002/"
+    },
+    "managed": true,
+    "gateway_ip": "10.100.207.1",
+    "allow_proxy": true,
+    "id": 2,
+    "name": "10.100.207.0/24",
+    "dns_servers": [],
+    "resource_uri": "/MAAS/api/2.0/subnets/2/",
+    "cidr": "10.100.207.0/24"
+}
+*
+
+***************************************************************************
+* Configuring MAAS to use 10.2.1.205 as upstream DNS server
+Success.
+Machine-readable output follows:
+OK
+squid.service is not active, cannot reload.
+invoke-rc.d: initscript squid, action "reload" failed.
+
+***************************************************************************
+* Now configuring MAAS to use the 'flat' storage model by default....
+*
+Success.
+Machine-readable output follows:
+OK
+
+***************************************************************************
+* MAAS tells nodes to look to an Ubuntu repository on the Internet. You
+
+* can customize that site by entering it here, or leave this field blank
+* to use the default value of http://us.archive.ubuntu.com/ubuntu/.
+*
+* Type your repository's URL, or press the Enter key:
+* Setting the repository URL to http://us.archive.ubuntu.com/ubuntu/
+Success.
+Machine-readable output follows:
+OK
+
+***************************************************************************
+* Setting up certification preseed files....
+*
+
+***************************************************************************
+* MAAS requires boot resource images to be useful; however, importing them
+* can take a LONG time. You can perform this task now or defer it until
+* later (or do it manually with the MAAS web UI).
+*
+* Do you want to import boot resources now (Y/n)? Y
+* Importing boot resources. This can take a LONG time....
+
+***************************************************************************
+* Ubuntu hardware certification is done using point-release images. These
+* can take a LONG time to download. You can do so now or defer this task.
+*
+* Do you want to import point-release images now (Y/n)? Y
+*
+* Do you want to import 17.04 (1 image) (y/N)? n
+*
+* Do you want to import the 16.04 series (3 images) (Y/n)? Y
+* Loading Ubuntu 16.04.2 GA (amd64)
+--2018-03-28 10:51:08--  http://certification-static.canonical.com/fixed-point-releases//ubuntu-16.04.2-server-amd64-curtin.tar.gz
+Resolving certification-static.canonical.com (certification-static.canonical.com)... 91.189.90.52
+Connecting to certification-static.canonical.com (certification-static.canonical.com)|91.189.90.52|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 443081793 (423M) [application/x-gzip]
+Saving to: ‘/tmp/ubuntu-16.04.2-server-amd64-curtin.tar.gz’
+
+ubuntu-16.04.2-server-amd64-curtin.tar. 100%[==============================================================================>] 422.56M  3.83MB/s    in 2m 9s
+
+2018-03-28 10:53:17 (3.27 MB/s) - ‘/tmp/ubuntu-16.04.2-server-amd64-curtin.tar.gz’ saved [443081793/443081793]
+
+* Loading Ubuntu 16.04.1 GA (amd64)
+--2018-03-28 10:53:56--  http://certification-static.canonical.com/fixed-point-releases//ubuntu-16.04.1-server-amd64-curtin.tar.gz
+Resolving certification-static.canonical.com (certification-static.canonical.com)... 91.189.90.52
+Connecting to certification-static.canonical.com (certification-static.canonical.com)|91.189.90.52|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 397679064 (379M) [application/x-gzip]
+Saving to: ‘/tmp/ubuntu-16.04.1-server-amd64-curtin.tar.gz’
+
+ubuntu-16.04.1-server-amd64-curtin.tar. 100%[==============================================================================>] 379.26M  3.88MB/s    in 2m 35s
+
+2018-03-28 10:56:31 (2.45 MB/s) - ‘/tmp/ubuntu-16.04.1-server-amd64-curtin.tar.gz’ saved [397679064/397679064]
+
+* Loading Ubuntu 16.04 GA (amd64)
+--2018-03-28 10:57:10--  http://certification-static.canonical.com/fixed-point-releases//ubuntu-16.04-server-amd64-curtin.tar.gz
+Resolving certification-static.canonical.com (certification-static.canonical.com)... 91.189.90.52
+Connecting to certification-static.canonical.com (certification-static.canonical.com)|91.189.90.52|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 392146773 (374M) [application/x-gzip]
+Saving to: ‘/tmp/ubuntu-16.04-server-amd64-curtin.tar.gz’
+
+ubuntu-16.04-server-amd64-curtin.tar.gz 100%[==============================================================================>] 373.98M  6.92MB/s    in 93s
+
+2018-03-28 10:58:43 (4.04 MB/s) - ‘/tmp/ubuntu-16.04-server-amd64-curtin.tar.gz’ saved [392146773/392146773]
+
+*
+* Do you want to import the 14.04 series (6 images) (Y/n)? n
+* Waiting for default image to become available (this can take
+* a few minutes)....
+* Setting deployment OS to 'custom'
+Success.
+Machine-readable output follows:
+OK
+* Setting OS release to u16.04.2_amd64
+Success.
+Machine-readable output follows:
+OK
+
+***************************************************************************
+* The /usr/sbin/maniacs-setup script has finished!
+
+NOTE: downloading time: start-time=10:50 end-time=11:06
+############################################################################################################ 
+
+
+Checking the MAAS Configuration:
+ 
+
+
+
+
+
