@@ -25,12 +25,12 @@ after_reboot(){
 	# modify network interface
 	clear
 	ifconfig |grep -i link
-	echo -n "Enter your external network interface [ens3]: "; read EXT
- 	echo -n "Enter your internal network interface [ens8]: "; read INT
+	echo -n "Enter your external network interface [ens3]: ";read EXT
+ 	echo -n "Enter your internal network interface [ens8]: ";read INT
 	echo "Now copying and modifying the maas cert config file..."
 	sudo cp /etc/maas-cert-server/config /etc/maas-cert-server/config.org
-        sudo sed -i -e 's/eth0/$INT/g' /etc/maas-cert-server/config
-	sudo sed -i -e 's/eth1/$EXT/g' /etc/maas-cert-server/config
+        sudo sed -i -e "s/eth0/$INT/g" /etc/maas-cert-server/config
+	sudo sed -i -e "s/eth1/$EXT/g" /etc/maas-cert-server/config
 	
 	# run the maniacs setup
 	clear
