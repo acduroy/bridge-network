@@ -26,12 +26,28 @@ after_reboot(){
 	# modify network interface
 	clear
 	ifconfig |grep -i link
-	echo -n "Enter your external network interface [ens3]: ";read EXT
- 	echo -n "Enter your internal network interface [ens8]: ";read INT
-	echo "Now copying and modifying the maas cert config file..."
-	sudo cp /etc/maas-cert-server/config /etc/maas-cert-server/config.org
-        sudo sed -i -e "s/eth0/$INT/g" /etc/maas-cert-server/config
-	sudo sed -i -e "s/eth1/$EXT/g" /etc/maas-cert-server/config
+	
+	#set done=0 to continue in while loop, if set done=1 to break in while loop
+	done=0
+	while : ; do
+	
+		echo -n "Enter your external network interface [ens3]: ";read EXT
+ 		echo -n "Enter your internal network interface [ens8]: ";read INT
+		
+		#check if input from user is correct
+		echo " Are you sure you entered the correct network interface name? [Y/n]";read YESNO
+		YESNO=$(echo $YESNO | awk '{print toupper($0)}')
+		if [[ $YESNO == "Y" ]]; then
+			done=1
+			echo "Now copying and modifying the maas cert config file..."
+			sudo cp /etc/maas-cert-server/config /etc/maas-cert-server/config.org
+        		sudo sed -i -e "s/eth0/$INT/g" /etc/maas-cert-server/config
+			sudo sed -i -e "s/eth1/$EXT/g" /etc/maas-cert-server/config
+			break	#exit from while loop
+		else
+			done=0
+		fi
+	done
 	
 	# run the maniacs setup
 	clear
