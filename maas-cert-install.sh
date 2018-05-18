@@ -51,6 +51,11 @@ after_reboot(){
 	
 	# run the maniacs setup
 	clear
+	echo "*****************************************************************************************"
+	echo "* If in case maniacs setup complained about incorrect network configuration             *"
+	echo "* check and edit the file /etc/maas-cert-server/config, entered the right configuration *"
+	echo "* and run maniacs-setup at command line again ...                                       *"
+	echo "*****************************************************************************************"
 	echo "Now setting up the maniac..."
 	sudo maniacs-setup
 }
