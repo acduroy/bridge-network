@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Function before reboot
+#********** before_reboot function ***********
 before_reboot(){
 	cd
 	echo "Getting the update..."
@@ -9,7 +9,7 @@ before_reboot(){
 	sudo apt-get dist-upgrade -y
 }
 
-# Function after reboot
+#********** after_reboot function ***********
 after_reboot(){
 	cd
 	sudo apt-add-repository ppa:hardware-certification/public
@@ -34,7 +34,7 @@ after_reboot(){
 	sudo maniacs-setup
 }
 
-# Enable autostart function
+#********** enable_autostart function ***********
 enable_autostart(){
 	# go to home directory and backup .bashrc file
 	cd 
@@ -45,7 +45,7 @@ enable_autostart(){
 	echo "$INS_STRING" >> .bashrc
 }
 
-# Disable autostart function
+#********** disable_autostart function ***********
 disable_autostart(){
 	# go to home directory and fetch the last line in .bashrc file
         cd 
@@ -63,13 +63,26 @@ disable_autostart(){
 	fi
 }
 
+#********** start_message function ***********
 start_message(){
+# check if last_command file exists to avoid repeated message queries
 if [[ -f last_command.txt ]]; then
 	echo "found last_command.txt ..."
 	return
 fi
+
 clear
-echo "This script will build a MAAS OS Certification Server..."
+echo "*************************************************************************************************"
+echo "* This script will build a MAAS OS Certification Server...                                      *"
+echo "* It's assume that this computer, to function as MAAS Server, is running Ubuntu 16.04 release.  *"
+echo "* if not, a successful installation cannot be guaranteed !!!                                    *"
+echo "*************************************************************************************************"
+read -p "Press enter to continue or ctrl+c to exit ..."
+clear
+ifconfig -a
+printf "/n"
+read -p "Kindly note your Server's network interfaces, you need this during installation. Thanks !!!"
+printf "\n"
 echo "Does the MAAS Server has two NIC interfaces available ? [Y/n]: ";read USER_INPUT
 USER_INPUT=$(echo $USER_INPUT | awk '{print toupper($0)}')
 if [[ $USER_INPUT == "Y" ]]
@@ -87,7 +100,7 @@ else
 fi
 }
 
-# Main Program starts here...
+#********** Main Program starts here ... ***********
 disable_autostart # to eliminate continuous loop
 
 # check if last_command file exist in the home directory
