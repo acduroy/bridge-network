@@ -1,4 +1,9 @@
 #! /bin/bash
+# maas-cert-install.sh
+# auth: acd
+# build: 5/17/2018
+# description: This script will partially automate the task to create a MAAS Server to be used for Ubuntu Certification
+# usage: execute at command line ./maas-cert-install.sh
 
 #********** before_reboot function ***********
 before_reboot(){
