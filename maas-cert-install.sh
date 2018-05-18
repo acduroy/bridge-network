@@ -85,8 +85,9 @@ echo "**************************************************************************
 read -p "Press enter to continue or ctrl+c to exit ..."
 clear
 ifconfig -a
-printf "/n"
-read -p "Kindly note your Server's network interfaces, you need this during installation. Thanks !!!"
+printf "\n"
+echo "Kindly note your Server's network interfaces, you need this during installation !!!"
+read -p "Press enter to continue or ctrl+c to exit ..."
 printf "\n"
 echo "Does the MAAS Server has two NIC interfaces available ? [Y/n]: ";read USER_INPUT
 USER_INPUT=$(echo $USER_INPUT | awk '{print toupper($0)}')
