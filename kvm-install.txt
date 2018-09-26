@@ -5,10 +5,18 @@ systemctl status NetworkManager
 sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
 
-#3. Check CPU hardware virtualization support
+#3. Edit /etc/network/interfaces
+ifconfig
+
+echo "Enter the up stream network interface for outside network [ex. eno1]: "; read EXT
+echo "Enter the down stream network interface for local area network [ex. eno2]: "; read INT
+
+sudo cp /etc/network/interface /etc/network/interface.orig
+
+#4. Check CPU hardware virtualization support
 sudo apt install cpu-checker -y
 
-# View the expected output, it should be as shown below:
+#5. View the expected output, it should be as shown below:
 echo " Check if Server is KVM ready !!!"
 echo "The output should be as stated below: " 
 echo "***************************"
@@ -17,14 +25,19 @@ echo "KVM acceleration can be used"
 echo "****************************"
 read -p "Press [enter] key to continue..."
 
+#6. run kvm verification
 kvm-ok
-if [[ 
 
+echo "Does the kvm checker has the same output as stated above? [Y/n]: "; read KVM_OK
+KVM_OK=$(echo $KVM_OK | awk '{print toupper($0)}')
+if [[ KVM_OK == "N" ]]; then exit
+fi
 
-#4. Install KVM
+#7. Install KVM
+echo "kvm packages will now start installing ...."
 sudo apt-get install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils -y
 
-#5. Verify installation
+#8. Verify installation
 groups                                
 #expected output:supermicro adm cdrom sudo dip plugdev lpadmin sambashare
 #expected output (after reboot): supermicro adm cdrom sudo dip plugdev lpadmin sambashare libvirtd
