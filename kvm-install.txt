@@ -1,17 +1,30 @@
 
-#Check CPU hardware virtualization support
+#1. Install desktop 16.04 Ubuntu
+#2. Disable Network Manager
+systemctl status NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl disable NetworkManager
+
+#3. Check CPU hardware virtualization support
 sudo apt install cpu-checker -y
+
+# View the expected output, it should be as shown below:
+echo " Check if Server is KVM ready !!!"
+echo "The output should be as stated below: " 
+echo "***************************"
+echo "INFO: /dev/kvm exists "
+echo "KVM acceleration can be used"
+echo "****************************"
+read -p "Press [enter] key to continue..."
+
 kvm-ok
+if [[ 
 
-#Expected output should be:
-#Output: 
-#INFO: /dev/kvm exists
-#KVM acceleration can be used
 
-#Install KVM
+#4. Install KVM
 sudo apt-get install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils -y
 
-#Verify installation
+#5. Verify installation
 groups                                
 #expected output:supermicro adm cdrom sudo dip plugdev lpadmin sambashare
 #expected output (after reboot): supermicro adm cdrom sudo dip plugdev lpadmin sambashare libvirtd
