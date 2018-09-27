@@ -8,10 +8,34 @@ sudo systemctl disable NetworkManager
 #3. Edit /etc/network/interfaces
 ifconfig
 
-echo "Enter the up stream network interface for outside network [ex. eno1]: "; read EXT
-echo "Enter the down stream network interface for local area network [ex. eno2]: "; read INT
+echo "Enter the up stream network interface for external network [ex. eno1]: "; read EXT
+echo "Enter the down stream interface for internal network [ex. eno2]: "; read INT
+echo "Enter static ip address of Internal Network Interface [ex. 10.100.205.2]: "; read INT_ADDR
+IFS=':'
+array=( $INT_ADDR )
+BCAST_ADDR=${array[0:2] + ".255"}
 
+#backup /etc/network/interface file
 sudo cp /etc/network/interface /etc/network/interface.orig
+cat << CFG | sudo tee /etc/network/interfaces
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+auto $EXT
+iface $EXT inet dhcp
+
+auto $INT
+iface $INT inet static
+    address $INT_ADDR
+    netmask 255.255.255.0
+    broadcast $BCAST_ADDR
+CFG
+
+# Reset network interface
+sudo ip addr flush $INT
+sudo ip addr flush $EXT
+sudo service networking restart 
 
 #4. Check CPU hardware virtualization support
 sudo apt install cpu-checker -y
