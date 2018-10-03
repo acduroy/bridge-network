@@ -11,8 +11,10 @@ ifconfig
 echo "Enter the up stream network interface for external network [ex. eno1]: "; read EXT
 echo "Enter the down stream interface for internal network [ex. eno2]: "; read INT
 echo "Enter static ip address of Internal Network Interface [ex. 10.100.205.2]: "; read INT_ADDR
+OIFS=$IFS
 IFS=':'
 array=( $INT_ADDR )
+IFS=$OIFS
 BCAST_ADDR=${array[0:2] + ".255"}
 
 #backup /etc/network/interface file
@@ -113,23 +115,31 @@ echo "In addition, a promiscus mode will apply on the bridge network interface"
 read -p "Press [Enter] key to continue..."
 
 #install the software #
-#check if aptitude packe is installed
+#check if aptitude package is installed
 sudo apt install aptitude -Y
 sudo aptitude install bridge-utils
 
 # show network interfaces #
 clear
 ifconfig -a |grep -i Ethernet
-echo "Remember the IP address as shown above to create bridge network !!!"
+echo "Remember the IP address as shown above will be used to create bridge network !!!"
 echo "Use the DNS NAME Server = "   
 str="yahoo.com"
 nslookup $str
 
 # Network info from User input here: #
-#echo -n "Enter External network interface to bridge [ex. eno1]: "; read EXT
 echo -n "Enter External network interface [ex. eno1]: "; read INT
-echo -n "Enter Internal network interface to bridge [ex. eno2]: "; read INT
-# Ask for more PHY NICs to bind to the bride ? <---- need a loop here!!!!
+# while loop is for multiple entrees of NIC(s) to bridge
+loop_again = 1
+while [ $loop_again -eq 1 ]; do
+    echo -n "Enter the NIC name to bridge. You can enter multiple NIC to bind"
+    echo -n "Just seprate it by space [ex. eno2 enp1s0f0 enp1s0f1]: "; read -a INTS
+    echo "You've just entered '$#' NIC(s) to bridge. These are the ff.:"
+    echo ${#INT[@]}
+    echo "Is this right? [y/n]: "; read yn
+    if [[ $yn == "y" ]]; then loop_again = 0; fi
+done
+
 echo -n "Enter bridge name [ex. br0]: "; read BNAME
 echo -n "Enter IP address of the bridge network: "; read IPADDR
 echo -n "Enter broadcast IP address [ex. xx.xx.xx.255]: "; read BADDR
@@ -144,34 +154,38 @@ sudo brctl addif $BNAME $INT
 # Setup network config file #
 sudo cp /etc/network/interfaces /etc/network/interfaces.bak
 cat << BRIDGE | sudo tee /etc/network/interfaces
+    
 # interfaces(5) file used by ifup(8) and ifdown(8)
-# source /etc/network/interfaces.d/*
 # The loopback network interface
 auto lo
 iface lo inet loopback
 
 # The primary network interface
 auto $EXT
-iface $EXT inet manual
-
-# The secondary network interface
-auto $INT
-iface $INT inet manual
-   up ifconfig $INT promisc
-   down ifconfig $INT -promisc
+iface $EXT inet dhcp
 
 # The bride network interface
 auto $BNAME
 iface $BNAME inet static 
-   address $IPADDR
-   netmask 255.255.255.0
-   broadcast $BADDR
-   bridge_ports $INT
-   bridge_stp off
-   bridge_fd 0
-   bridge_maxwait 0
-   
+    address $IPADDR
+    netmask 255.255.255.0
+    broadcast $BADDR
+    bridge_ports ${INT[@]}
+    bridge_stp off
+    bridge_fd 0
+    bridge_maxwait 0
+
 BRIDGE
+
+#for loop to populate secondary NIC interfaces
+for INT in $INTS
+do
+    echo >> /etc/network/interfaces
+    echo auto $INT >> /etc/network/interfaces
+    echo iface $INT inet manual >> /etc/network/interfaces
+    echo up ifconfig $INT promisc >> /etc/network/interfaces
+    echo down ifconfig $INT -promisc >> /etc/network/interfaces
+done
 
 # Reset network interface #
 sudo ip addr flush $INT
@@ -180,6 +194,6 @@ sudo ifup $BNAME
 #sudo ip addr flush $SEC_INT
 sudo services networking restart
 
-# to verify bride is working !!! #
+# to verify bridge is working !!! #
 brctl show
 ifconfig
