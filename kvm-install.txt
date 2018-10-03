@@ -64,14 +64,18 @@ sudo apt-get install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils -y
 #8. Verify installation
 groups                                
 #expected output:supermicro adm cdrom sudo dip plugdev lpadmin sambashare
+
+#9. Reboot the system
+sudo reboot
 #expected output (after reboot): supermicro adm cdrom sudo dip plugdev lpadmin sambashare libvirtd
 
+#10. Using virsh command, list all vms
 sudo virsh list --all                      
 #Expected output:
 # Id    Name                           State
 #----------------------------------------------------
 
-#Check for libvirt-sock file ownership
+#11. Check for libvirt-sock file ownership
 ls -la /var/run/libvirt/libvirt-sock 
 #Expected output: srwxrwx--- 1 root libvirtd 0 Apr 12 09:49 /var/run/libvirt/libvirt-sock
 
@@ -79,5 +83,20 @@ ls -la /var/run/libvirt/libvirt-sock
 ls -l /dev/kvm
 #Expected output: crw-rw----+ 1 root kvm 10, 232 Apr 12 09:49 /dev/kvm
 
-#install Virt Manager
+#12. install Virt Manager
 sudo apt-get install virt-manager -y
+
+#13. install teamviewer
+mkdir teamviewer-install
+cd teamviewer-install
+wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+sudo dpkg -i teamviewer_amd64.deb 
+sudo apt-get install -f -y
+
+#14. Install iced_tea
+cd 
+sudo apt-get install -y icedtea-netx
+javaws ~/Downloads/cgoban.jnlp
+
+#15. Create a network bridge 
+
