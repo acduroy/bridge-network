@@ -1,13 +1,25 @@
+#!/bin/bash/
+# Program Name: kvm-install.sh
+# Usage: ./kvm-install.sh
+# Description: This will setup kvm virtualization on the server
 
 #1. Install desktop 16.04 Ubuntu
+echo "*********** ATTENTION ************"
+echo "It's assumed that this server is running Ubuntu Desktop 16.04 !!!"
+echo "if not, press [ctrl+c] to exit and install Desktop version of Ubuntu "
+read -p "Otherwise, press [enter] key to continue. Thanks ...\n"
+
 #2. Disable Network Manager
+echo "For fresh install, Network Manager will be disabled ..."
 systemctl status NetworkManager
 sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
+read -p "Press [enter] to continue ...\n"
 
 #3. Edit /etc/network/interfaces
+clear
 ifconfig
-
+echo ""
 echo "Enter the up stream network interface for external network [ex. eno1]: "; read EXT
 echo "Enter the down stream interface for internal network [ex. eno2]: "; read INT
 echo "Enter static ip address of Internal Network Interface [ex. 10.100.205.2]: "; read INT_ADDR
