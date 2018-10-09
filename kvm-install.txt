@@ -16,6 +16,8 @@ sudo systemctl stop NetworkManager
 sudo systemctl disable NetworkManager
 read -p "Press [enter] to continue ...\n"
 
+#need to put a reboot command here ....
+
 #3. Edit /etc/network/interfaces
 clear
 ifconfig
@@ -51,17 +53,37 @@ sudo ip addr flush $INT
 sudo ip addr flush $EXT
 sudo service networking restart 
 
+#check network connection
+echo "checking internet connection..."
+ping 8.8.8.8 -c 10 
+echo
+echo "checking routing connection... "
+echo "****************************************************************"
+echo "output should point to DNS server = 10.2.1.205"
+echo "If not, checked /etc/network/interface configuration file"
+echo "before continuing, thanks !!!"
+echo "*****************************************************************"
+echo
+nslookup yahoo.com
+echo
+read -p "press [enter] key to continue, press [ctrl+c] to exit, thanks..."
+
+#install open ssh server package
+sudo apt-get update
+sudo apt-get install openssh server -y
+
 #4. Check CPU hardware virtualization support
+clear
 sudo apt install cpu-checker -y
 
 #5. View the expected output, it should be as shown below:
-echo " Check if Server is KVM ready !!!"
-echo "The output should be as stated below: " 
+echo " This step will check if Server is KVM ready !!!"
+echo "The output should be similar below: " 
 echo "***************************"
 echo "INFO: /dev/kvm exists "
 echo "KVM acceleration can be used"
 echo "****************************"
-read -p "Press [enter] key to continue..."
+read -p "Press [enter] key to continue, press [ctrl+c] to exit ..."
 
 #6. run kvm verification
 kvm-ok
@@ -90,17 +112,32 @@ sudo virsh list --all
 #----------------------------------------------------
 
 #11. Check for libvirt-sock file ownership
+echo
+echo "checking libvirt-sock file ownership ..."
 ls -la /var/run/libvirt/libvirt-sock 
-#Expected output: srwxrwx--- 1 root libvirtd 0 Apr 12 09:49 /var/run/libvirt/libvirt-sock
+
+echo
+echo "The expected output should be:"
+echo "srwxrwx--- 1 root libvirtd 0 /var/run/libvirt/libvirt-sock"
+read -p "Press [enter] to continue, press [ctrl+c] to exit ..."
 
 #Check for kvm file ownership
+echo
+echo "checking kvm file ownership..."
 ls -l /dev/kvm
-#Expected output: crw-rw----+ 1 root kvm 10, 232 Apr 12 09:49 /dev/kvm
+echo
+echo "The expected output should be:"
+echo "crw-rw----+ 1 root kvm 10, 232 /dev/kvm"
+read -p "Press [enter] to continue, press [ctrl+c] to exit ..."
 
 #12. install Virt Manager
+clear
+echo "now installing virt manager ..."
 sudo apt-get install virt-manager -y
 
 #13. install teamviewer
+clear
+echo "Installing teamviewer..."
 mkdir teamviewer-install
 cd teamviewer-install
 wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
@@ -108,6 +145,8 @@ sudo dpkg -i teamviewer_amd64.deb
 sudo apt-get install -f -y
 
 #14. Install iced_tea
+clear
+echo "Installing iced_tea package..."
 cd 
 sudo apt-get install -y icedtea-netx
 javaws ~/Downloads/cgoban.jnlp
@@ -119,11 +158,7 @@ javaws ~/Downloads/cgoban.jnlp
 #!/bin/bash
 
 clear
-echo "Script Description:"
-echo "This script will create a bridge to the VM(s)"
-echo "Bridge will be created for the internal network of VM(s)"
-echo "While macvtap will be used for the external network of VMs"
-echo "In addition, a promiscus mode will apply on the bridge network interface" 
+echo "Bridge will be created for VM(s) internal network ..." 
 read -p "Press [Enter] key to continue..."
 
 #install the software #
@@ -187,7 +222,7 @@ iface $BNAME inet static
     bridge_fd 0
     bridge_maxwait 0
 
-BRIDGE
+BRIDGEifconfig
 
 #for loop to populate secondary NIC interfaces
 for INT in $INTS
