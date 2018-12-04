@@ -163,7 +163,7 @@ read -p "Press [Enter] key to continue..."
 
 #install the software #
 #check if aptitude package is installed
-sudo apt install aptitude -Y
+sudo apt install aptitude -y
 sudo aptitude install bridge-utils
 
 # show network interfaces #
