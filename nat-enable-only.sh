@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Apt update and upgrade
+sudo apt update 
+sudo apt upgrade -y
+
+# reboot the machine
+sudo reboot
+
 # Display network interfaces status
 clear
 # Execute at home directory
